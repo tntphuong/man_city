@@ -23,3 +23,22 @@ export const Tag = props => {
     return template;
   }
 };
+
+export const validate = element => {
+  let error = [true, ''];
+
+  if (element.validation && element.validation.email) {
+    const valid = /\S+@\S+\.\S+/.test(element.value);
+    const message = `${!valid ? 'Email not valid' : ''}`;
+
+    error = !valid ? [valid, message] : error;
+  }
+
+  if (element.validation && element.validation.required) {
+    const valid = element.value.trim() !== '';
+    const message = `${!valid ? 'This field is required' : ''}`;
+
+    error = !valid ? [valid, message] : error;
+  }
+  return error;
+};

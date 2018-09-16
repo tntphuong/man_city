@@ -11,7 +11,6 @@ class Block extends Component {
       .limitToLast(6)
       .once('value')
       .then(snapshot => {
-        console.log(snapshot.val());
         const data = [];
         snapshot.forEach(snapchild => {
           data.push({
