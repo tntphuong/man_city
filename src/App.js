@@ -79,14 +79,14 @@ class App extends Component {
               component={SignIn}
               path="/sign_in"
             />
-            <PublicRoutes
+            <PrivateRoute
               restricted={false}
               {...this.props}
               exact
               component={MatchesPage}
               path="/the_matches"
             />
-            <PublicRoutes
+            <PrivateRoute
               restricted={false}
               {...this.props}
               exact

@@ -15,7 +15,7 @@ class SignIn extends Component {
         config: {
           name: 'email_input',
           type: 'email',
-          placeholder: 'Enter your email'
+          placeholder: 'Enter email : admin@gmail.com'
         },
         validation: {
           required: true,
@@ -30,7 +30,7 @@ class SignIn extends Component {
         config: {
           name: 'password_input',
           type: 'password',
-          placeholder: 'Enter your password'
+          placeholder: 'Enter password : admin123'
         },
         validation: {
           required: true

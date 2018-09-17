@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MatchesBlock = ({ match }) => {
+const MatchesBlock = ({ match, func }) => {
   return (
     <div className="match_block">
       <div className="match_date">
@@ -12,7 +12,7 @@ const MatchesBlock = ({ match }) => {
             <div
               className="icon"
               style={{
-                background: `url(/images/team_icons/${match.localThmb}.png)`
+                background: func(match.localThmb)
               }}
             />
             <div className="team_name">{match.local}</div>
@@ -24,7 +24,7 @@ const MatchesBlock = ({ match }) => {
             <div
               className="icon"
               style={{
-                background: `url(/images/team_icons/${match.awayThmb}.png)`
+                background: func(match.awayThmb)
               }}
             />
             <div className="team_name">{match.away}</div>

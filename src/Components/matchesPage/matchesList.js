@@ -1,11 +1,50 @@
 import React, { Component } from 'react';
 import { easePolyOut } from 'd3-ease';
 import NodeGroup from 'react-move/NodeGroup';
+import { firebaseTeams, firebase } from '../../firebase';
+import { Promise } from 'core-js';
 
 class MatchesList extends Component {
   state = {
-    matcheslist: []
+    isLoading: true,
+    matcheslist: [],
+    teamsUrl: []
   };
+
+  componentDidMount() {
+    const teams = [];
+    const teamsUrl = [];
+    firebaseTeams.once('value').then(snapshot => {
+      snapshot.forEach(team => {
+        teams.push(team.val().thmb + '.png');
+      });
+
+      let promises = [];
+
+      teams.forEach(team => {
+        promises.push(
+          new Promise((resolve, reject) => {
+            firebase
+              .storage()
+              .ref('team_icons')
+              .child(team)
+              .getDownloadURL()
+              .then(url => {
+                teamsUrl.push(url);
+                resolve();
+              });
+          })
+        );
+      });
+
+      Promise.all(promises).then(() => {
+        this.setState({
+          isLoading: false,
+          teamsUrl
+        });
+      });
+    });
+  }
 
   static getDerivedStateFromProps(props, state) {
     return (state = {
@@ -13,8 +52,23 @@ class MatchesList extends Component {
     });
   }
 
+  getUrlTeamIcon = team => {
+    let returnUrl;
+    if (!this.state.isLoading) {
+      const { teamsUrl } = this.state;
+
+      for (let child of teamsUrl) {
+        if (child.search(team) !== -1) {
+          returnUrl = `url(${child})`;
+          break;
+        }
+      }
+    }
+    return returnUrl;
+  };
+
   showMatches = () =>
-    this.state.matcheslist ? (
+    this.state.matcheslist || this.state.isLoading ? (
       <NodeGroup
         data={this.state.matcheslist}
         keyAccessor={d => d.id}
@@ -54,9 +108,7 @@ class MatchesList extends Component {
                     <div
                       className="icon"
                       style={{
-                        background: `url(/images/team_icons/${
-                          data.localThmb
-                        }.png)`
+                        background: this.getUrlTeamIcon(data.localThmb)
                       }}
                     />
                     <div className="team">{data.local}</div>
@@ -66,9 +118,7 @@ class MatchesList extends Component {
                     <div
                       className="icon"
                       style={{
-                        background: `url(/images/team_icons/${
-                          data.awayThmb
-                        }.png)`
+                        background: this.getUrlTeamIcon(data.awayThmb)
                       }}
                     />
                     <div className="team">{data.away}</div>
@@ -94,7 +144,6 @@ class MatchesList extends Component {
     ) : null;
 
   render() {
-    console.log(this.state.matcheslist);
     return <div>{this.showMatches()}</div>;
   }
 }
